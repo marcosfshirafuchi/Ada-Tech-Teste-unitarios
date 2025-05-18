@@ -4,10 +4,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import tech.ada.ml_users.dto.UsuarioDTO;
 import tech.ada.ml_users.exception.UsuarioNaoEncontradoException;
+import tech.ada.ml_users.model.Endereco;
 import tech.ada.ml_users.model.Usuario;
 import tech.ada.ml_users.repository.UsuariosRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public class BuscarUsuarioServiceTest {
@@ -66,6 +69,35 @@ public class BuscarUsuarioServiceTest {
         //Verificação
         Assertions.assertNotNull(exception);
         Assertions.assertEquals("Usuário com ID " + id + " não encontrado", exception.getMessage());
+    }
+
+    @Test
+    void deveBuscarTodosOsUsuariosComSucesso(){
+        //Cenario
+        Usuario usuario1 = new Usuario();
+        usuario1.setNome("Rodolfo");
+        usuario1.setId(1L);
+        Endereco endereco1 = new Endereco();
+        endereco1.setCep("7100000");
+        usuario1.setEndereco(endereco1);
+
+        Usuario usuario2 = new Usuario();
+        usuario2.setNome("Helena");
+        usuario2.setId(2L);
+        Endereco endereco2 = new Endereco();
+        endereco2.setCep("8000000");
+        usuario2.setEndereco(endereco2);
+
+        Mockito.when(repository.findAll()).thenReturn(List.of(usuario1,usuario2));
+
+        //Execução
+        List<UsuarioDTO> usuariosDTO = service.buscarTodosOsUsuarios();
+
+        //Validação
+        Assertions.assertNotNull(usuariosDTO);
+        Assertions.assertEquals(2,usuariosDTO.size());
+        Assertions.assertEquals("Rodolfo",usuariosDTO.get(0).getNome());
+        Assertions.assertEquals("Helena",usuariosDTO.get(1).getNome());
     }
 
 }
