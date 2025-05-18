@@ -20,14 +20,14 @@ public class BuscarUsuarioServiceTest {
     UsuariosRepository repository;
 
     @BeforeEach
-    public void setUp(){
+    public void setUp() {
         //Temos que mokar a classe repository
         repository = Mockito.mock(UsuariosRepository.class);
         service = new BuscarUsuariosService(repository);
     }
 
     @Test
-    void deveRetornarUsuarioBuscadoPorIdComSucesso(){
+    void deveRetornarUsuarioBuscadoPorIdComSucesso() {
         //Cenario
         Long id = 1L;
 
@@ -49,14 +49,14 @@ public class BuscarUsuarioServiceTest {
         Assertions.assertNotNull(usuarioRetornado);
 
         //Valida se o Id do usuário é igual ao Id retornado
-        Assertions.assertEquals(id,usuarioRetornado.getId());
+        Assertions.assertEquals(id, usuarioRetornado.getId());
 
         //Valida se o nome Rodolfo é igual o nome retornado
-        Assertions.assertEquals("Rodolfo",usuarioRetornado.getNome());
+        Assertions.assertEquals("Rodolfo", usuarioRetornado.getNome());
     }
 
     @Test
-    void deveLancarExcecaoQuandoUsuarioNaoEncontrado(){
+    void deveLancarExcecaoQuandoUsuarioNaoEncontrado() {
 
         //Cenário
         Long id = 1L;
@@ -72,7 +72,7 @@ public class BuscarUsuarioServiceTest {
     }
 
     @Test
-    void deveBuscarTodosOsUsuariosComSucesso(){
+    void deveBuscarTodosOsUsuariosComSucesso() {
         //Cenario
         Usuario usuario1 = new Usuario();
         usuario1.setNome("Rodolfo");
@@ -88,16 +88,29 @@ public class BuscarUsuarioServiceTest {
         endereco2.setCep("8000000");
         usuario2.setEndereco(endereco2);
 
-        Mockito.when(repository.findAll()).thenReturn(List.of(usuario1,usuario2));
+        Mockito.when(repository.findAll()).thenReturn(List.of(usuario1, usuario2));
 
         //Execução
         List<UsuarioDTO> usuariosDTO = service.buscarTodosOsUsuarios();
 
         //Validação
         Assertions.assertNotNull(usuariosDTO);
-        Assertions.assertEquals(2,usuariosDTO.size());
-        Assertions.assertEquals("Rodolfo",usuariosDTO.get(0).getNome());
-        Assertions.assertEquals("Helena",usuariosDTO.get(1).getNome());
+        Assertions.assertEquals(2, usuariosDTO.size());
+        Assertions.assertEquals("Rodolfo", usuariosDTO.get(0).getNome());
+        Assertions.assertEquals("Helena", usuariosDTO.get(1).getNome());
     }
 
+    @Test
+    void deveRetornarListaVaziaAoBuscarTodosOsUsuarios() {
+        //Cenario
+        //Aqui você deixa explicito o que espera do Mockito, neste retornar uma lista vazia
+        Mockito.when(repository.findAll()).thenReturn(List.of());
+
+        //Execução
+        List<UsuarioDTO> usuariosRetornados = service.buscarTodosOsUsuarios();
+
+        //Validação
+        Assertions.assertNotNull(usuariosRetornados);
+        Assertions.assertTrue(usuariosRetornados.isEmpty());
+    }
 }
