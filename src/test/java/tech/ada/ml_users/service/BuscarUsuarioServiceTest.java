@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import tech.ada.ml_users.exception.UsuarioNaoEncontradoException;
 import tech.ada.ml_users.model.Usuario;
 import tech.ada.ml_users.repository.UsuariosRepository;
 
@@ -50,4 +51,21 @@ public class BuscarUsuarioServiceTest {
         //Valida se o nome Rodolfo é igual o nome retornado
         Assertions.assertEquals("Rodolfo",usuarioRetornado.getNome());
     }
+
+    @Test
+    void deveLancarExcecaoQuandoUsuarioNaoEncontrado(){
+
+        //Cenário
+        Long id = 1L;
+
+        Mockito.when(repository.findById(id)).thenReturn(Optional.empty());
+
+        //Execução
+        UsuarioNaoEncontradoException exception = Assertions.assertThrows(UsuarioNaoEncontradoException.class, () -> service.buscarUsuarioPorId(id));
+
+        //Verificação
+        Assertions.assertNotNull(exception);
+        Assertions.assertEquals("Usuário com ID " + id + " não encontrado", exception.getMessage());
+    }
+
 }
